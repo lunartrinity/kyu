@@ -1,0 +1,22 @@
+{
+  "name": "kyu",
+  "version": "0.0.0",
+  "description": "A lightweight Javascript framework for web architecture",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lunartrinity/kyu.git"
+  },
+  "keywords": [
+    "framework",
+    "architecture"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lunartrinity/kyu/issues"
+  },
+  "homepage": "https://github.com/lunartrinity/kyu#readme"
+}
