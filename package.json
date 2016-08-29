@@ -1,10 +1,12 @@
 {
   "name": "kyu",
   "version": "0.1.0",
-  "description": "A lightweight Javascript framework for web architecture",
+  "description": "A Javascript framework for web architecture",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "coverage": "istanbul cover ./tests/basic.js",
+    "lint": "standard ./index.js ./tests/**/*.js || true",
+    "test": "tape ./tests/**/*.js || true"
   },
   "repository": {
     "type": "git",
@@ -18,5 +20,10 @@
   "bugs": {
     "url": "https://github.com/lunartrinity/kyu/issues"
   },
-  "homepage": "https://github.com/lunartrinity/kyu#readme"
+  "homepage": "https://github.com/lunartrinity/kyu#readme",
+  "devDependencies": {
+    "istanbul": "^0.4.5",
+    "standard": "^8.0.0",
+    "tape": "^4.6.0"
+  }
 }

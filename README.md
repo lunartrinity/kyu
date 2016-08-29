@@ -1,2 +1,2 @@
-# kyu
-A lightweight Javascript framework for architecting web apps
+# Kyu
+A Javascript framework for web architecture
