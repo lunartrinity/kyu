@@ -1,6 +1,6 @@
 {
   "name": "kyu",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Javascript framework for web architecture",
   "main": "index.js",
   "scripts": {
