@@ -18,23 +18,8 @@ function kyu (options) {
     map: map
   }
 
-  function newMsg (msg, nextMsgVal) {
-    if (msg.next === null) {
-      return {
-        val: msg.val,
-        next: {
-          val: nextMsgVal,
-          next: null
-        }
-      }
-    } else {
-      return {
-        val: msg.val,
-        next: newMsg(msg.next, nextMsgVal)
-      }
-    }
-  }
-
+  // Update the app's model and run custom command
+  // (object)
   function update (msg) {
     app.model = _update(msg, app.model)
 
@@ -43,18 +28,33 @@ function kyu (options) {
     }
   }
 
+  // Get current view
+  // () -> any
   function render () {
     return _render(app.model, app.update, app.map, null)
   }
 
+  // Add new msg
+  // (number/string, object) -> object
   function map (msgVal, msg) {
     if (!msg) {
       return {
         val: msgVal,
         next: null
       }
+    } else if (!msg.next) {
+      return {
+        val: msg.val,
+        next: {
+          val: msgVal,
+          next: null
+        }
+      }
     } else {
-      return newMsg(msg, msgVal)
+      return {
+        val: msg.val,
+        next: map(msgVal, msg.next)
+      }
     }
   }
 
