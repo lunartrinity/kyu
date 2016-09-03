@@ -1,12 +1,14 @@
-import HomePage from './components/HomePage'
-import DocsPage from './components/DocsPage'
+import HomePage from './pages/home-page'
+import DocsPage from './pages/docs-page'
+
 import kyu from 'kyu'
 import page from 'page'
-
 import h from 'virtual-dom/h'
 import diff from 'virtual-dom/diff'
 import patch from 'virtual-dom/patch'
 import createElement from 'virtual-dom/create-element'
+
+require('normalize.css')
 
 function onUpdate () {
   let newTree = app.render()
