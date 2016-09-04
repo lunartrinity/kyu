@@ -36,7 +36,6 @@ module.exports = {
   
 if (process.env.NODE_ENV === 'production') {
   module.exports.devtool = 'source-map'
-  // http://vuejs.github.io/vue-loader/workflow/production.html
   module.exports.plugins = (module.exports.plugins || []).concat([
     new webpack.DefinePlugin({
       'process.env': {

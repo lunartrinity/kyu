@@ -5,6 +5,7 @@
     "dev": "webpack --watch",
     "devserver": "webpack-dev-server --inline --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "build:helloworld": "cross-env NODE_ENV=production webpack ./examples/helloworld/webpack.config.js --progress --hide-modules",
     "lint": "standard src/**/*.js || true"
   },
   "devDependencies": {
