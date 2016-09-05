@@ -26,14 +26,14 @@ function update (model, msg) {
   }
 }
 
-function render (model, update, msg, map) {
+function render (model, dispatch) {
   return h('div', { }, [
     h('button', {
-      onclick: function () { update(msgType.DECREMENT, msg) } 
+      onclick: dispatch(msgType.DECREMENT)
     }, '-'),
     ' ' + model.count + ' ',
     h('button', {
-      onclick: function () { update(msgType.INCREMENT, msg) }
+      onclick: dispatch(msgType.INCREMENT)
     }, '+')
   ])
 }

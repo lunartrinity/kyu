@@ -19,13 +19,13 @@ function model () {
   }
 }
 
-function getNewColor (update, msg) {
+function getNewColor (dispatch) {
   var params = {
     red: Math.floor(Math.random() * 255),
     green: Math.floor(Math.random() * 255),
     blue: Math.floor(Math.random() * 255)
   }
-  update(msgType.CHANGE_COLOR, msg, params)
+  dispatch(msgType.CHANGE_COLOR, params)
 }
 
 function update (model, msg, params) {
@@ -41,7 +41,7 @@ function update (model, msg, params) {
   }
 }
 
-function render (model, update, msg, map) {
+function render (model, dispatch) {
   var colorString = 'rgb(' + model.red +
     ', ' + model.green + ', ' + model.blue + ')'
 
@@ -54,7 +54,7 @@ function render (model, update, msg, map) {
       } 
     }, []),
     h('button', {
-      onclick: function () { update(msgType.GET_NEW_COLOR, msg) } 
+      onclick: dispatch (msgType.GET_NEW_COLOR) 
     }, 'Colorize')
   ])
 }

@@ -1,0 +1,14 @@
+{
+  "name": "kyu-countdown-example",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "webpack --watch"
+  },
+  "devDependencies": {
+    "webpack": "^1.13.2"
+  },
+  "dependencies": {
+    "kyu": "^0.1.1",
+    "virtual-dom": "^2.1.1"
+  }
+}

@@ -8,6 +8,7 @@ function kyu (options) {
   }
 
   var _model = options.model
+  var _start = options.start
   var _update = options.update
   var _render = options.render
 
@@ -20,12 +21,13 @@ function kyu (options) {
 
   // Update the app's model and run custom command
   // (object)
-  function update (msgVal, msg, params) {
-    let newMsg = map(msgVal, msg)
+  function update (newMsg, oldMsg, params) {
     let res = _update(app.model, newMsg, params)
 
-    if (typeof res === 'function') {
-      res(update, msg)
+    if (typeof res === 'function') {      
+      var dispatch = createDispatch(oldMsg)
+
+      res(dispatch)
     } else {
       app.model = res
       
@@ -38,7 +40,42 @@ function kyu (options) {
   // Get current view
   // () -> any
   function render () {
-    return _render(app.model, app.update, null, app.map)
+    var dispatch = createDispatchWithEvent(null)
+    var renderChild = createRenderChild(null)
+
+    return _render(app.model, dispatch, renderChild)
+  }
+
+  // Create a function for rendering child
+  // (object) -> (string, (object, function, function) -> any)
+  function createRenderChild (msg) {
+    return function (msgVal, renderFunc) {
+      var newMsg = map(msgVal, msg)
+      var dispatch = createDispatchWithEvent(newMsg)
+      var renderChild = createRenderChild(newMsg)      
+
+      return renderFunc(app.model, dispatch, renderChild)
+    }
+  }
+
+  // Create a function for dispatching message
+  // (object) -> (string, object)
+  function createDispatch (msg) {
+    return function (msgVal, params) {
+      var newMsg = map(msgVal, msg)
+      app.update(newMsg, msg, params)
+    }
+  }
+  
+  // Create a function for dispatching message, with event
+  // (object) -> ((string, object) -> (e))
+  function createDispatchWithEvent (msg) {
+    return function (msgVal, params) {
+      return function (e) {
+        var newMsg = map(msgVal, msg)
+        app.update(newMsg, msg, params, e)
+      }
+    }
   }
 
   // Add new msg
@@ -63,6 +100,12 @@ function kyu (options) {
         next: map(msgVal, msg.next)
       }
     }
+  }
+
+  if (typeof _start === 'function') {
+    var dispatch = createDispatch(null)
+
+    _start(app.model, dispatch)
   }
 
   return app
