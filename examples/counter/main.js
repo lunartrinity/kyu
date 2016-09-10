@@ -14,12 +14,11 @@ function onUpdate () {
 
 var app = kyu({
   model: counter.model(),
-  update: counter.update,
-  render: counter.render,
+  view: counter.view,
   onUpdate: onUpdate
 })
 
-let tree = app.render()
-let rootNode = createElement(tree)
+var tree = app.render()
+var rootNode = createElement(tree)
 
 document.getElementById('app').appendChild(rootNode)

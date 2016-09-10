@@ -14,12 +14,11 @@ function onUpdate () {
 
 var app = kyu({
   model: colorize.model(),
-  update: colorize.update,
-  render: colorize.render,
+  view: colorize.view,
   onUpdate: onUpdate
 })
 
-let tree = app.render()
-let rootNode = createElement(tree)
+var tree = app.render()
+var rootNode = createElement(tree)
 
 document.getElementById('app').appendChild(rootNode)

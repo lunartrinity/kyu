@@ -1,5 +1,5 @@
 var kyu = require('../kyu')
-var countdown = require('./countdown')
+var countdownlist = require('./counterlist')
 
 var diff = require('virtual-dom/diff')
 var patch = require('virtual-dom/patch')
@@ -13,8 +13,8 @@ function onUpdate () {
 }
 
 var app = kyu({
-  model: countdown.model(3),
-  view: countdown.view,
+  model: countdownlist.model(),
+  view: countdownlist.view,
   onUpdate: onUpdate
 })
 

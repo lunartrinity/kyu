@@ -1,111 +1,92 @@
 module.exports = kyu
 
-// Initiate kyu apps
-// (object) -> object
 function kyu (options) {
-  if (!options) {
-    return { }
+  var app = { }
+
+  app.model = options.model
+
+  app.render = function () {
+    var dispatch = createDispatchWithEvent([])
+    var renderChild = createRenderChild([])
+
+    return options.view(app.model, dispatch, renderChild)
   }
 
-  var _model = options.model
-  var _start = options.start
-  var _update = options.update
-  var _render = options.render
+  app.update = function (newMsgs, oldMsgs, e) {    
+    var updateChild = createUpdateChild(newMsgs, oldMsgs)
 
-  var app = {
-    model: _model,
-    update: update,
-    render: render,
-    map: map
-  }
-
-  // Update the app's model and run custom command
-  // (object)
-  function update (newMsg, oldMsg, params) {
-    let res = _update(app.model, newMsg, params)
-
+    var res = updateChild(app.model)            
+    
     if (typeof res === 'function') {      
-      var dispatch = createDispatch(oldMsg)
+      var dispatch = createDispatch(oldMsgs)
 
       res(dispatch)
     } else {
       app.model = res
-      
-      if (typeof options.onUpdate === 'function') {
-        options.onUpdate()
-      }
+    }
+
+    if (typeof options.onUpdate === 'function') {
+      options.onUpdate()
     }
   }
-
-  // Get current view
-  // () -> any
-  function render () {
-    var dispatch = createDispatchWithEvent(null)
-    var renderChild = createRenderChild(null)
-
-    return _render(app.model, dispatch, renderChild)
-  }
-
-  // Create a function for rendering child
-  // (object) -> (string, (object, function, function) -> any)
-  function createRenderChild (msg) {
-    return function (msgVal, renderFunc) {
-      var newMsg = map(msgVal, msg)
-      var dispatch = createDispatchWithEvent(newMsg)
-      var renderChild = createRenderChild(newMsg)      
-
-      return renderFunc(app.model, dispatch, renderChild)
-    }
-  }
-
+  
   // Create a function for dispatching message
   // (object) -> (string, object)
-  function createDispatch (msg) {
-    return function (msgVal, params) {
-      var newMsg = map(msgVal, msg)
-      app.update(newMsg, msg, params)
+  function createDispatch (msgs) {
+    return function (action, data) {      
+      data = data || { }
+
+      var newMsgs = msgs.slice(0)
+      newMsgs.push({ action: action, data: data })
+
+      app.update(newMsgs, msgs)
     }
   }
   
   // Create a function for dispatching message, with event
   // (object) -> ((string, object) -> (e))
-  function createDispatchWithEvent (msg) {
-    return function (msgVal, params) {
-      return function (e) {
-        var newMsg = map(msgVal, msg)
-        app.update(newMsg, msg, params, e)
+  function createDispatchWithEvent (msgs) {
+    return function (action, data) {
+      data = data || { }
+
+      return function (e) {        
+        var newMsgs = msgs.slice(0)
+        newMsgs.push({ action: action, data: data })
+
+        app.update(newMsgs, msgs, e)
       }
     }
   }
 
-  // Add new msg
-  // (number/string, object) -> object
-  function map (msgVal, msg) {
-    if (!msg) {
-      return {
-        val: msgVal,
-        next: null
-      }
-    } else if (!msg.next) {
-      return {
-        val: msg.val,
-        next: {
-          val: msgVal,
-          next: null
-        }
-      }
-    } else {
-      return {
-        val: msg.val,
-        next: map(msgVal, msg.next)
-      }
+  function createRenderChild (msgs) {
+    return function (view, model, action, data) {
+      data = data || { }
+
+      var newMsgs = msgs.slice(0)
+      newMsgs.push({ action: action, data: data })
+
+      var dispatch = createDispatchWithEvent(newMsgs)
+      var renderChild = createRenderChild(newMsgs)
+
+      return view (model, dispatch, renderChild)
     }
   }
 
-  if (typeof _start === 'function') {
-    var dispatch = createDispatch(null)
+  function createUpdateChild (newMsgs, oldMsgs) {
+    return function (model) {
+      if (!newMsgs || newMsgs.length == 0) {
+        return model
+      } else {
+        var currentMsgs = newMsgs.slice(0)
+        var currentMsg = currentMsgs.shift()
+        
+        var updateChild = createUpdateChild(currentMsgs, newMsgs)
 
-    _start(app.model, dispatch)
+        var res = currentMsg.action(model, currentMsg.data, updateChild)
+
+        return res
+      }
+    }
   }
 
   return app
