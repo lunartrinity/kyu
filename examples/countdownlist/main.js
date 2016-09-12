@@ -1,5 +1,5 @@
 var kyu = require('../kyu')
-var countdownlist = require('./counterlist')
+var countdownlist = require('./countdownlist')
 
 var diff = require('virtual-dom/diff')
 var patch = require('virtual-dom/patch')

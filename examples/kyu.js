@@ -2,10 +2,11 @@ module.exports = kyu
 
 function kyu (options) {
   var app = { }
+  var _effects = []
 
   app.model = options.model
 
-  app.render = function () {
+  app.render = function () {    
     var dispatch = createDispatchWithEvent([])
     var renderChild = createRenderChild([])
 
@@ -15,16 +16,15 @@ function kyu (options) {
   app.update = function (newMsgs, oldMsgs, e) {    
     var updateChild = createUpdateChild(newMsgs, oldMsgs)
 
-    var res = updateChild(app.model)            
+    var res = updateChild(app.model)
     
-    if (typeof res === 'function') {      
-      var dispatch = createDispatch(oldMsgs)
+    app.model = res
 
-      res(dispatch)
-    } else {
-      app.model = res
+    while (_effects.length > 0) {
+      var eff = _effects.shift()
+      eff.action(eff.dispatch)
     }
-
+    
     if (typeof options.onUpdate === 'function') {
       options.onUpdate()
     }
@@ -33,7 +33,7 @@ function kyu (options) {
   // Create a function for dispatching message
   // (object) -> (string, object)
   function createDispatch (msgs) {
-    return function (action, data) {      
+    return function (action, data) {
       data = data || { }
 
       var newMsgs = msgs.slice(0)
@@ -49,7 +49,7 @@ function kyu (options) {
     return function (action, data) {
       data = data || { }
 
-      return function (e) {        
+      return function (e) {            
         var newMsgs = msgs.slice(0)
         newMsgs.push({ action: action, data: data })
 
@@ -59,7 +59,7 @@ function kyu (options) {
   }
 
   function createRenderChild (msgs) {
-    return function (view, model, action, data) {
+    return function (view, model, action, data) { 
       data = data || { }
 
       var newMsgs = msgs.slice(0)
@@ -73,18 +73,25 @@ function kyu (options) {
   }
 
   function createUpdateChild (newMsgs, oldMsgs) {
-    return function (model) {
+    return function (model) {    
       if (!newMsgs || newMsgs.length == 0) {
         return model
       } else {
         var currentMsgs = newMsgs.slice(0)
         var currentMsg = currentMsgs.shift()
         
-        var updateChild = createUpdateChild(currentMsgs, newMsgs)
+        var updateChild = createUpdateChild(currentMsgs, oldMsgs)
 
         var res = currentMsg.action(model, currentMsg.data, updateChild)
 
-        return res
+        if (typeof res === 'function') {
+          var dispatch = createDispatch(oldMsgs)
+          _effects.push({ action: res, dispatch: dispatch })
+
+          return model
+        } else {
+          return res
+        }
       }
     }
   }
