@@ -2,8 +2,6 @@ var h = require('virtual-dom/h')
 
 module.exports = {
   model: model,
-  getNewColor: getNewColor,
-  changeColor: changeColor,
   view: view
 }
 
@@ -47,7 +45,7 @@ function view (model, dispatch) {
       } 
     }, []),
     h('button', {
-      onclick: dispatch (getNewColor) 
+      onclick: function () { dispatch (getNewColor) }
     }, 'Colorize')
   ])
 }

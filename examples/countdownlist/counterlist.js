@@ -33,7 +33,7 @@ function updateCounter (model, params, updateChild) {
 function view (model, dispatch, renderChild) {
   return h('div', { }, [
     h('button', {
-      onclick: dispatch(addCounter)
+      onclick: function () { dispatch(addCounter) }
     }, 'Add'),
     model.counters.map(function (x, i) {
       return h('div', { }, [

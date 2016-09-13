@@ -2,8 +2,6 @@ var h = require('virtual-dom/h')
 
 module.exports = {
   model: model,
-  increment: increment,
-  decrement: decrement,
   view: view
 }
 
@@ -22,11 +20,11 @@ function decrement(model) {
 function view (model, dispatch) {
   return h('div', { }, [
     h('button', {
-      onclick: dispatch(decrement)
+      onclick: function () { dispatch(decrement) }
     }, '-'),
     ' ' + model.count + ' ',
     h('button', {
-      onclick: dispatch(increment)
+      onclick: function () { dispatch(increment) }
     }, '+')
   ])
 }

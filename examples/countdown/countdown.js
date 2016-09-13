@@ -59,7 +59,9 @@ function view (model, dispatch) {
     case state.WAITING:
       return h('div', { }, [
         ' ' + model.count + ' ',
-        h('button', { onclick: dispatch(restart) }, ['Start'])
+        h('button', { 
+          onclick: function () { dispatch(restart) } 
+        }, ['Start'])
       ])
     case state.COUNTING:
       return h('div', { }, [
@@ -68,7 +70,9 @@ function view (model, dispatch) {
     case state.FINISHED:
       return h('div', { }, [
         ' BOOM!!! ',
-        h('button', { onclick: dispatch(restart) }, ['Restart'])
+        h('button', { onclick: function () { 
+          dispatch(restart) } 
+        }, ['Restart'])
       ])
   }
 }

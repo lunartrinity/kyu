@@ -1,37 +1,43 @@
 module.exports = kyu
 
+// Initiate a new kyu app
 function kyu (options) {
-  var app = { }
-  var _effects = []
+  if (!options) {
+    return { }
+  }
 
+  var app = { }
+
+  // Application model
   app.model = options.model
 
-  app.render = function () {    
-    var dispatch = createDispatchWithEvent([])
+  // Get current view
+  app.render = function () {
+    var dispatch = createDispatch([])
     var renderChild = createRenderChild([])
 
     return options.view(app.model, dispatch, renderChild)
   }
 
-  app.update = function (newMsgs, oldMsgs, e) {    
-    var updateChild = createUpdateChild(newMsgs, oldMsgs)
+  // Update the app's model
+  app.update = function (newMsgs, oldMsgs, effects) {
+    var updateChild = createUpdateChild(newMsgs, oldMsgs, effects)
 
     var res = updateChild(app.model)
-    
+
     app.model = res
 
-    while (_effects.length > 0) {
-      var eff = _effects.shift()
+    while (effects.length > 0) {
+      var eff = effects.shift()
       eff.action(eff.dispatch)
     }
-    
+
     if (typeof options.onUpdate === 'function') {
       options.onUpdate()
     }
   }
-  
+
   // Create a function for dispatching message
-  // (object) -> (string, object)
   function createDispatch (msgs) {
     return function (action, data) {
       data = data || { }
@@ -39,54 +45,41 @@ function kyu (options) {
       var newMsgs = msgs.slice(0)
       newMsgs.push({ action: action, data: data })
 
-      app.update(newMsgs, msgs)
-    }
-  }
-  
-  // Create a function for dispatching message, with event
-  // (object) -> ((string, object) -> (e))
-  function createDispatchWithEvent (msgs) {
-    return function (action, data) {
-      data = data || { }
-
-      return function (e) {            
-        var newMsgs = msgs.slice(0)
-        newMsgs.push({ action: action, data: data })
-
-        app.update(newMsgs, msgs, e)
-      }
+      app.update(newMsgs, msgs, [])
     }
   }
 
+  // Create a function for rendering child view
   function createRenderChild (msgs) {
-    return function (view, model, action, data) { 
+    return function (view, model, action, data) {
       data = data || { }
 
       var newMsgs = msgs.slice(0)
       newMsgs.push({ action: action, data: data })
 
-      var dispatch = createDispatchWithEvent(newMsgs)
+      var dispatch = createDispatch(newMsgs)
       var renderChild = createRenderChild(newMsgs)
 
-      return view (model, dispatch, renderChild)
+      return view(model, dispatch, renderChild)
     }
   }
 
-  function createUpdateChild (newMsgs, oldMsgs) {
-    return function (model) {    
-      if (!newMsgs || newMsgs.length == 0) {
+  // Create a function to update child component
+  function createUpdateChild (newMsgs, oldMsgs, effects) {
+    return function (model) {
+      if (!newMsgs || newMsgs.length === 0) {
         return model
       } else {
         var currentMsgs = newMsgs.slice(0)
         var currentMsg = currentMsgs.shift()
-        
-        var updateChild = createUpdateChild(currentMsgs, oldMsgs)
+
+        var updateChild = createUpdateChild(currentMsgs, oldMsgs, effects)
 
         var res = currentMsg.action(model, currentMsg.data, updateChild)
 
         if (typeof res === 'function') {
           var dispatch = createDispatch(oldMsgs)
-          _effects.push({ action: res, dispatch: dispatch })
+          effects.push({ action: res, dispatch: dispatch })
 
           return model
         } else {

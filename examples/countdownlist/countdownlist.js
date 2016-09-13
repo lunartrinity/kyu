@@ -33,7 +33,7 @@ function updateCountdown (model, params, updateChild) {
 function view (model, dispatch, renderChild) {
   return h('div', { }, [
     h('button', {
-      onclick: dispatch(addCountdown, { initialCount: 3 })
+      onclick: function () { dispatch(addCountdown, { initialCount: 3 }) }
     }, 'Add'),
     model.countdowns.map(function (x, i) {
       return h('div', { }, [
