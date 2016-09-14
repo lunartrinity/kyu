@@ -1,6 +1,8 @@
 module.exports = {
   model: model,
-  view: view
+  view: view,
+  increment: increment,
+  decrement: decrement
 }
 
 function model () {
